@@ -63,8 +63,10 @@ namespace EventFlow.EntityFramework.Tests.InMemory.Infrastructure
                 throw new DbUpdateException("Error while updating.", new Exception("Unique constraint violated."));
 
             _innerTable.Create(entry);
-
-            indexEntries.Select((item, i) => _indexes[i].Add(item)).ToArray();
+            for (var i = 0; i < indexEntries.Length; i++)
+            {
+                _indexes[i].Add(indexEntries[i]);
+            }
         }
 
         public void Delete(IUpdateEntry entry)
@@ -76,11 +78,16 @@ namespace EventFlow.EntityFramework.Tests.InMemory.Infrastructure
         {
             _innerTable.Update(entry);
         }
-
-        public InMemoryIntegerValueGenerator<TProperty> GetIntegerValueGenerator<TProperty>(IProperty property)
+        public InMemoryIntegerValueGenerator<TProperty> GetIntegerValueGenerator<TProperty>(IProperty property, IReadOnlyList<IInMemoryTable> tables) =>
+            _innerTable.GetIntegerValueGenerator<TProperty>(property, tables);
+        public void BumpValueGenerators(object[] row)
         {
-            return _innerTable.GetIntegerValueGenerator<TProperty>(property);
+            _innerTable.BumpValueGenerators(row);
         }
+        public IEnumerable<object[]> Rows => _innerTable.Rows;
+        public IInMemoryTable BaseTable => _innerTable.BaseTable;
+        public IEntityType EntityType => _innerTable.EntityType;
+
 
         private struct IndexEntry
         {

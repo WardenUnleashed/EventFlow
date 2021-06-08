@@ -35,9 +35,9 @@ namespace EventFlow.EntityFramework.Tests.InMemory.Infrastructure
         {
         }
 
-        public override IInMemoryTable Create(IEntityType entityType)
+        public override IInMemoryTable Create(IEntityType entityType, IInMemoryTable baseTable)
         {
-            var innerTable = base.Create(entityType);
+            var innerTable = base.Create(entityType, baseTable);
             var uniqueIndexes = entityType.GetIndexes().Where(i => i.IsUnique).ToArray();
 
             return uniqueIndexes.Any()
