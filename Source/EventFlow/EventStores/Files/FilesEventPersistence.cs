@@ -290,7 +290,7 @@ namespace EventFlow.EventStores.Files
         /// <exception cref="InvalidOperationException"></exception>
         private string GetRelativePath(string relativeTo, string path)
         {
-#if NETCOREAPP3_1 || NETCOREAPP3_0
+#if NETCOREAPP3_1
             return Path.GetRelativePath(relativeTo, path);
 #else
             if (string.IsNullOrEmpty(relativeTo))
