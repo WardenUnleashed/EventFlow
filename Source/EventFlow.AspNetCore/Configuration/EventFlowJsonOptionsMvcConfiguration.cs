@@ -28,10 +28,10 @@ using Microsoft.Extensions.Options;
 namespace EventFlow.AspNetCore.Configuration
 {
     public class EventFlowJsonOptionsMvcConfiguration
-#if NETSTANDARD2_0
+#if NETSTANDARD2_1
         : IConfigureOptions<MvcJsonOptions>
 #endif
-#if (NETCOREAPP3_0 || NETCOREAPP3_1)
+#if (NETCOREAPP3_1)
         : IConfigureOptions<MvcNewtonsoftJsonOptions>
 #endif
     {
@@ -42,13 +42,13 @@ namespace EventFlow.AspNetCore.Configuration
             _jsonOptions = jsonOptions;
         }
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_1
         public void Configure(MvcJsonOptions options)
         {
             _jsonOptions.Apply(options.SerializerSettings);
         }
 #endif
-#if (NETCOREAPP3_0 || NETCOREAPP3_1)
+#if (NETCOREAPP3_1)
         public void Configure(MvcNewtonsoftJsonOptions options)
         {
             _jsonOptions.Apply(options.SerializerSettings);

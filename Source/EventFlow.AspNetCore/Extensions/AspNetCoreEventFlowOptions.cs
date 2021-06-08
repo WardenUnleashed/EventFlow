@@ -93,7 +93,7 @@ namespace EventFlow.AspNetCore.Extensions
             return this;
         }
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_1
         public AspNetCoreEventFlowOptions UseMvcJsonOptions()
         {
             _options.RegisterServices(s =>
@@ -101,7 +101,7 @@ namespace EventFlow.AspNetCore.Extensions
             return this;
         }
 #endif
-#if (NETCOREAPP3_0 || NETCOREAPP3_1)
+#if (NETCOREAPP3_1)
         public AspNetCoreEventFlowOptions UseMvcJsonOptions()
         {
             _options.RegisterServices(s =>
