@@ -106,12 +106,12 @@ namespace EventFlow.RabbitMQ.Tests
         {
             var headers = basicDeliverEventArgs.BasicProperties.Headers
                 .ToDictionary(kv => kv.Key, kv => Encoding.UTF8.GetString((byte[])kv.Value));
-            var message = Encoding.UTF8.GetString(basicDeliverEventArgs.Body);
+            var message = Encoding.UTF8.GetString(basicDeliverEventArgs.Body.Span);
 
             return new RabbitMqMessage(
                 message,
                 headers,
-                new Exchange(basicDeliverEventArgs.Exchange), 
+                new Exchange(basicDeliverEventArgs.Exchange),
                 new RoutingKey(basicDeliverEventArgs.RoutingKey),
                 new MessageId(basicDeliverEventArgs.BasicProperties.MessageId));
         }
