@@ -25,9 +25,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build
-        path: |
-          ./Source/
-          *.sln
+        path: ./Source/**/bin
   test:
     runs-on: ubuntu-latest
     needs: build
