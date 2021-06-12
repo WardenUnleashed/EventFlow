@@ -21,5 +21,11 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Unit Tests
-      run: dotnet test --no-build --verbosity normal --filter UnitTests
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: current director
+        run: ls -al
+      - name: Unit Tests
+        run: dotnet test --no-build --verbosity normal --filter UnitTests
