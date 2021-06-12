@@ -37,4 +37,6 @@ jobs:
         with:
           name: build
       - name: Unit Tests
-        run: dotnet test --no-build --verbosity normal --filter UnitTests
+        run: dotnet -v
+      - name: Unit Tests
+        run: dotnet test --no-build --verbosity normal --filter UnitTests EventFlow.sln
