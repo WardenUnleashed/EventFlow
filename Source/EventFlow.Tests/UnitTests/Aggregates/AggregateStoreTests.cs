@@ -42,6 +42,8 @@ using EventFlow.TestHelpers.Extensions;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using EventFlow.Snapshots;
+using EventFlow.TestHelpers.Aggregates.Snapshots;
 
 namespace EventFlow.Tests.UnitTests.Aggregates
 {
@@ -52,6 +54,7 @@ namespace EventFlow.Tests.UnitTests.Aggregates
         private Mock<IAggregateFactory> _aggregateFactoryMock;
         private Mock<IResolver> _resolverMock;
         private Mock<IDomainEventPublisher> _domainEventPublisherMock;
+        private Mock<ISnapshotStore> _snapshotStoreMock;
 
         [SetUp]
         public void SetUp()
@@ -64,7 +67,9 @@ namespace EventFlow.Tests.UnitTests.Aggregates
             _eventStoreMock = InjectMock<IEventStore>();
             _aggregateFactoryMock = InjectMock<IAggregateFactory>();
             _resolverMock = InjectMock<IResolver>();
-
+            _snapshotStoreMock = InjectMock<ISnapshotStore>();
+            _snapshotStoreMock.Setup(s => s.LoadSnapshotAsync<ThingyAggregate, ThingyId, ThingySnapshot>(It.IsAny<ThingyId>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult((SnapshotContainer)null));
             _domainEventPublisherMock = new Mock<IDomainEventPublisher>();
             _resolverMock
                 .Setup(r => r.Resolve<IDomainEventPublisher>())
