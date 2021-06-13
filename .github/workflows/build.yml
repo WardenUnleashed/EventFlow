@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore -c Release
     - name: Unit Tests
-      run: dotnet test --no-build --verbosity normal --filter UnitTests EventFlow.sln
+      run: dotnet test --no-build --verbosity normal --filter UnitTests -c Release
     - name: Upload Build
       uses: actions/upload-artifact@v2
       with:
