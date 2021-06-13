@@ -23,11 +23,6 @@ jobs:
       run: dotnet build --no-restore -c Release
     - name: Unit Tests
       run: dotnet test --no-build --verbosity normal --filter Category=unit -c Release
-    - name: Upload Build
-      uses: actions/upload-artifact@v2
-      with:
-        name: build
-        path: ./Source/**/bin
   integration_tests:
     runs-on: ubuntu-latest
     needs: build
@@ -37,10 +32,19 @@ jobs:
       EVENTFLOW_MSSQL_USER: sa
       EVENTFLOW_MSSQL_PASS: Password12! 
     steps:
-      - name: Download Build
-        uses: actions/download-artifact@v2
+      - uses: actions/checkout@v2
+      - name: Setup 5.0 .NET
+        uses: actions/setup-dotnet@v1
         with:
-          name: build
+          dotnet-version: 5.0.x
+      - name: Setup 3.1 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
       - name: Configure sysctl limits for Elasticsearch
         run: |
           sudo swapoff -a
@@ -51,7 +55,7 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 6.8.3
-      - name: Unit Tests
+      - name: Integration Tests
         run: dotnet test --no-build --verbosity normal --filter Category=integration -c Release
     services:
       rabbitmq:
