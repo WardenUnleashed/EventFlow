@@ -46,7 +46,7 @@ jobs:
       - name: Build
         run: dotnet build --no-restore -c Release
       - name: Integration Tests
-        run: dotnet test --no-build --verbosity normal --filter Category=integration -c Release
+        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine
