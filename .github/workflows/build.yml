@@ -48,8 +48,8 @@ jobs:
       - name: Integration Tests
         run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release
         env:
-          ELASTICSEARCH_URL: "elasticsearch"
-          RABBITMQ_URL: "amqp://rabbitmq"
+          ELASTICSEARCH_URL: "http://elasticsearch:9200"
+          RABBITMQ_URL: "amqp://rabbitmq:5672"
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine
