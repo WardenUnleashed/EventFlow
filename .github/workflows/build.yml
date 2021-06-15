@@ -48,8 +48,8 @@ jobs:
       - name: Integration Tests
         run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release
         env:
-          ELASTICSEARCH_URL: "http://elasticsearch:9200"
-          RABBITMQ_URL: "amqp://rabbitmq:5672"
+          ELASTICSEARCH_URL: "http://localhost:9200"
+          RABBITMQ_URL: "amqp://guest:guest@localhost:5672"
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine
@@ -80,6 +80,9 @@ jobs:
           - "1433:1433"
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms1g -Xmx1g
         ports:
           - 9200:9200
 
