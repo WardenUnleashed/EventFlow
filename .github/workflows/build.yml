@@ -21,6 +21,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore -c Release
+    - name: Pack
+      run: dotnet pack --no-restore --no-build -c Release
     - name: Unit Tests
       run: dotnet test --no-build --verbosity normal --filter Category=unit -c Release
   integration_tests:
@@ -47,6 +49,9 @@ jobs:
         run: dotnet build --no-restore -c Release
       - name: Integration Tests
         run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release
+        env:
+          ELASTICSEARCH_URL: "elasticsearch"
+          RABBITMQ_URL: "amqp://rabbitmq"
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine
