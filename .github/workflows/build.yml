@@ -23,11 +23,128 @@ jobs:
       run: dotnet build --no-restore -c Release
     - name: Unit Tests
       run: dotnet test --no-build --verbosity normal --filter Category=unit -c Release
-  integration_tests:
+  integration_tests_elasticsearch:
     runs-on: ubuntu-latest
+    name: Integration Tests / ElasticSearch
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup 5.0 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup 3.1 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Integration Tests
+        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release ./Source/EventFlow.Elasticsearch.Tests
+        env:
+          ELASTICSEARCH_URL: "http://localhost:9200"
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms1g -Xmx1g
+        ports:
+          - 9200:9200
+  integration_tests_rabbitmq:
+    runs-on: ubuntu-latest
+    name: Integration Tests / RabbitMQ
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup 5.0 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup 3.1 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Integration Tests
+        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release ./Source/EventFlow.RabbitMQ.Tests
+        env:
+          RABBITMQ_URL: "amqp://guest:guest@localhost:5672"
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672:5672
+          - 15672:15672
+  integration_tests_eventstore:
+    runs-on: ubuntu-latest
+    name: Integration Tests / EventStore
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup 5.0 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup 3.1 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Integration Tests
+        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release ./Source/EventFlow.EventStores.EventStore.Tests
+    services:
+      eventstore:
+        image: eventstore/eventstore:release-4.1.3
+        ports:
+          - "1113:1113"
+          - "2113:2113"
+  integration_tests_postgre:
+    runs-on: ubuntu-latest
+    name: Integration Tests / Postgre
     needs: build
     env:
       HELPZ_POSTGRESQL_PASS: Password12!
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup 5.0 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup 3.1 .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Integration Tests
+        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release ./Source/EventFlow.PostgreSql.Tests
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Password12!
+        ports:
+          - "5432:5432"
+  integration_tests_msql:
+    runs-on: ubuntu-latest
+    name: Integration Tests / MsSql
+    needs: build
+    env:
       EVENTFLOW_MSSQL_SERVER: 127.0.0.1,1433
       EVENTFLOW_MSSQL_USER: sa
       EVENTFLOW_MSSQL_PASS: Password12! 
@@ -46,31 +163,8 @@ jobs:
       - name: Build
         run: dotnet build --no-restore -c Release
       - name: Integration Tests
-        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release
-        env:
-          ELASTICSEARCH_URL: "http://localhost:9200"
-          RABBITMQ_URL: "amqp://guest:guest@localhost:5672"
+        run: dotnet test --no-build --verbosity minimal --filter Category=integration -c Release ./Source/EventFlow.MsSql.Tests
     services:
-      rabbitmq:
-        image: rabbitmq:3-management-alpine
-        env:
-          RABBITMQ_DEFAULT_USER: guest
-          RABBITMQ_DEFAULT_PASS: guest
-        ports:
-          - 5672:5672
-          - 15672:15672
-      eventstore:
-        image: eventstore/eventstore:release-4.1.3
-        ports:
-          - "1113:1113"
-          - "2113:2113"
-      postgres:
-        image: postgres:10
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Password12!
-        ports:
-          - "5432:5432"
       mssql:
         image: mcr.microsoft.com/mssql/server:2017-latest
         env:
@@ -78,13 +172,5 @@ jobs:
           SA_PASSWORD: Password12!
         ports:
           - "1433:1433"
-      elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-        env:
-          discovery.type: single-node
-          ES_JAVA_OPTS: -Xms1g -Xmx1g
-        ports:
-          - 9200:9200
-
 
 
